@@ -63,7 +63,8 @@ docker build -t register-rt-collections:dev .
    Pull `ghcr.io/western-australian-nif-node/register-rt-collections:<version>`
    (no image host credentials needed, the package is public), then
    **Add New Command** and paste `command.json`.
-2. Same page: **enable** the command site-wide.
+2. **Administer → Plugin Settings → Container Service → Command Configurations**. 
+   Enable the Launch commands for the two RTSTRUCT/SEGs. 
 3. **Project → Project Settings → Configure Commands**: enable
    `Register RT collections (scan event)` for each project, or rely on a
    site-wide subscription.
