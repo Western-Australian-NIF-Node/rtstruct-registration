@@ -1,0 +1,105 @@
+{
+  "name": "register-rt-collections",
+  "label": "Register RT collections",
+  "description": "Registers the archived RTSTRUCT/SEG scans of a session as OHIF ROI Collections so the viewer can import them. Idempotent; safe to fire on every Scan Created event.",
+  "version": "1.0.0",
+  "schema-version": "1.0",
+  "image": "ghcr.io/western-australian-nif-node/register-rt-collections:1.0.0",
+  "type": "docker",
+  "command-line": "python /app/register_rt_collections.py --project #PROJECT_ID# --session #SESSION_ID#",
+  "override-entrypoint": true,
+  "mounts": [],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "PROJECT_ID",
+      "label": "Project ID",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#PROJECT_ID#"
+    },
+    {
+      "name": "SESSION_ID",
+      "label": "Session ID",
+      "type": "string",
+      "required": true,
+      "replacement-key": "#SESSION_ID#"
+    }
+  ],
+  "outputs": [],
+  "xnat": [
+    {
+      "name": "register-rt-collections-scan",
+      "label": "Register RT collections (scan event)",
+      "description": "Launch on a scan; registers every unregistered RTSTRUCT/SEG in that scan's session.",
+      "contexts": ["xnat:imageScanData"],
+      "external-inputs": [
+        {
+          "name": "scan",
+          "label": "Scan",
+          "type": "Scan",
+          "required": true,
+          "load-children": false
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "project-id",
+          "type": "string",
+          "required": true,
+          "derived-from-wrapper-input": "scan",
+          "derived-from-xnat-object-property": "project-id",
+          "provides-value-for-command-input": "PROJECT_ID",
+          "user-settable": false
+        },
+        {
+          "name": "session-id",
+          "type": "string",
+          "required": true,
+          "derived-from-wrapper-input": "scan",
+          "derived-from-xnat-object-property": "session-id",
+          "provides-value-for-command-input": "SESSION_ID",
+          "user-settable": false
+        }
+      ],
+      "output-handlers": []
+    },
+    {
+      "name": "register-rt-collections-session",
+      "label": "Register RT collections (session)",
+      "description": "Launch on a session from its Actions menu; registers every unregistered RTSTRUCT/SEG in it.",
+      "contexts": ["xnat:imageSessionData"],
+      "external-inputs": [
+        {
+          "name": "session",
+          "label": "Session",
+          "type": "Session",
+          "required": true,
+          "load-children": false
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "project-id",
+          "type": "string",
+          "required": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "project-id",
+          "provides-value-for-command-input": "PROJECT_ID",
+          "user-settable": false
+        },
+        {
+          "name": "session-id",
+          "type": "string",
+          "required": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "id",
+          "provides-value-for-command-input": "SESSION_ID",
+          "user-settable": false
+        }
+      ],
+      "output-handlers": []
+    }
+  ]
+}
